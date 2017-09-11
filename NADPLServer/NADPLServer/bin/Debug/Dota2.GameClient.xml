@@ -1,0 +1,851 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Dota2.GameClient</name>
+    </assembly>
+    <members>
+        <member name="T:Dota2.Engine.DotaGameClient">
+            <summary>
+                A client capable of connecting to Source 1 servers.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.DotaGameClient.SessionStateTransition">
+            <summary>
+            Client status callback
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.SessionStateTransition.OldStatus">
+            <summary>
+            The previous state
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.SessionStateTransition.NewStatus">
+            <summary>
+            The new state
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.DotaGameClient.HandshakeRejected">
+            <summary>
+            Connection handshake to the server rejected with a reason
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.HandshakeRejected.reason">
+            <summary>
+            Reason for the rejection as given by the dota server
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.DotaGameClient.LogMessage">
+            <summary>
+            A debug output message from the client
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.LogMessage.message">
+            <summary>
+            The log message string
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._gameConnectTokens">
+            <summary>
+                A queue of available game connect tokens.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._registeredCallbacks">
+            <summary>
+                List of registered callbacks for cleanup later.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._appOwnershipTicket">
+            <summary>
+                Retreived app ownership ticket.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._authTicket">
+            <summary>
+                Auth ticket for next connect.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._connectAttempt">
+            <summary>
+                The current connect attempt ID.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._waitingForAuthTicket">
+            <summary>
+            Is there a pending connect request
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._connectLobby">
+            <summary>
+            Connect lobby
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient._connectDetails">
+            <summary>
+                Connect details.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.Callbacks">
+            <summary>
+                Callback manager.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.DotaGc">
+            <summary>
+                The DOTA Gc handler.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.publicIP">
+            <summary>
+                Public IP address according to steam.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.Controllers">
+            <summary>
+            Controllers supplied by the user
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.DotaGameClient.EntityBuilder">
+            <summary>
+            Entity builder.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.#ctor(Dota2.GC.DotaGCHandler,SteamKit2.CallbackManager,System.Net.IPAddress)">
+            <summary>
+                Create a game client attached to an existing DOTA gc handler.
+            </summary>
+            <param name="gc">existing GC handler</param>
+            <param name="cb">callback manager</param>
+            <param name="publicIp">optionally help out by specifying the public ip address</param>
+        </member>
+        <member name="P:Dota2.Engine.DotaGameClient.Session">
+            <summary>
+                The game session.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.Dispose">
+            <summary>
+                Dispose of the game client.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.RegisterCallbacks">
+            <summary>
+                Registers all internal handlers.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.Connect(Dota2.GC.Dota.Internal.CSODOTALobby)">
+            <summary>
+                Connect to the game server. Will use existing lobby on default.
+            </summary>
+            <param name="lobb"></param>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.BeginServerSession">
+            <summary>
+                Start the connection to the game server after auth ack.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.Disconnect">
+            <summary>
+                Disconnect from the game server or cancel connection attempt.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.RegisterController(Dota2.Engine.Control.IDotaGameController)">
+            <summary>
+            Adds a controller to the client.
+            </summary>
+            <param name="cont"></param>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.RegisterEntityMapping``1(System.String,System.Func{System.UInt32,Dota2.Engine.Game.DotaGameState,Dota2.Engine.Game.Data.MappedEntityClass})">
+            <summary>
+            Register an entity mapping class in the system.
+            </summary>
+            <typeparam name="T">Entity mapping class.</typeparam>
+            <param name="cname">Table name.</param>
+            <param name="factory">Factory to build the class.</param>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.CheckPublicIP">
+            <summary>
+                Check the public IP address.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.Log(System.String)">
+            <summary>
+                Log a message.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:Dota2.Engine.DotaGameClient.FetchAppTicket">
+            <summary>
+                Request the app ownership ticket from Steam.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Control.IDotaGameCommander">
+            <summary>
+            Internally a commander that can submit orders.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Control.IDotaGameCommander.Submit(Dota2.Engine.Game.Data.Order)">
+            <summary>
+            Submit an order
+            </summary>
+            <param name="order"></param>
+        </member>
+        <member name="M:Dota2.Engine.Control.IDotaGameCommander.Submit(System.String)">
+            <summary>
+            Submit a console command.
+            </summary>
+            <param name="consoleCommand">Console command</param>
+        </member>
+        <member name="T:Dota2.Engine.Control.IDotaGameController">
+            <summary>
+            Capable of controlling a DOTA 2 game client
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Control.IDotaGameController.Initialize(System.UInt64,Dota2.Engine.Game.DotaGameState,Dota2.Engine.Control.IDotaGameCommander)">
+            <summary>
+            Initialize the controller as the client begins to connect.
+            </summary>
+            <param name="id">Steam ID</param>
+            <param name="state">Emulated DOTA game client state</param>
+            <param name="commander">Command generator</param>
+        </member>
+        <member name="M:Dota2.Engine.Control.IDotaGameController.Tick">
+            <summary>
+            Called every tick. Must return near-instantly.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Data.AuthTicket">
+            <summary>
+                Generates auth tickets.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Data.DOTAConnectDetails">
+            <summary>
+                Details used to connect to the game server.
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.ConnectInfo">
+            <summary>
+                IP Address or Steam3 ID.
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.AuthTicket">
+            <summary>
+                Auth ticket used for steam.
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.ServerAuthTicket">
+            <summary>
+                Auth ticeket used for the server
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.AuthTicketCRC">
+            <summary>
+                Auth ticket hash.
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.ConnectID">
+            <summary>
+                Current connect attempt number.
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.SteamId">
+            <summary>
+                Steam ID converted to UInt64
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.Name">
+            <summary>
+                Profile name
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.SteamworksSessionId">
+            <summary>
+                Steamworks session ID
+            </summary>
+        </member>
+        <member name="P:Dota2.Engine.Data.DOTAConnectDetails.PassKey">
+            <summary>
+                Pass key
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.Entity">
+            <summary>
+                A DOTA 2 game entity.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.EntityClass">
+            <summary>
+                An entity class.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.Data.EntityClass.CreateWith(Dota2.GC.Dota.Internal.CSVCMsg_ClassInfo.class_t)">
+            <summary>
+                Parse a ClassInfo proto.
+            </summary>
+            <param name="proto">Class info proto</param>
+            <returns>EntityClass instance</returns>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.FlatTable">
+            <summary>
+                A flat network table.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.Order">
+            <summary>
+                An order executable by a player.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.Data.Order.MakeMouseClick(System.UInt16[],Dota2.Engine.Game.Data.Vector)">
+            <summary>
+                Build an order to make a mouse click.
+            </summary>
+            <param name="selected">Any selected unit IDs</param>
+            <param name="point">A vector point in the world to select</param>
+            <returns></returns>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.Property">
+            <summary>
+                A networked entity property.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.MappedEntityClass">
+            <summary>
+            A handler class for an entity.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.Data.MappedEntityClass.bindE``1(System.String,System.String)">
+            <summary>
+            Bind an enum value.
+            </summary>
+            <typeparam name="T">Enum type</typeparam>
+            <param name="table">Table name</param>
+            <param name="name">Property name</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Game.Data.MappedEntityClass.bind``1(System.String,System.String)">
+            <summary>
+            Bind a type value.
+            </summary>
+            <typeparam name="T">Type</typeparam>
+            <param name="table">Table name</param>
+            <param name="name">Property name</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Game.Data.MappedEntityClass.handle(System.String,System.String)">
+            <summary>
+            Bind a handle to a property.
+            </summary>
+            <param name="table">Table name</param>
+            <param name="name">Property name</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Game.Data.MappedEntityClass.range``1(System.String,System.Int32)">
+            <summary>
+            Bind a range to a property.
+            </summary>
+            <typeparam name="T">Range type</typeparam>
+            <param name="name">Table name</param>
+            <param name="count">Range index</param>
+            <returns></returns>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.PropertyInfo">
+            <summary>
+                Information about a networked property.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.SendTable">
+            <summary>
+                Networked send property table.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.StringTable">
+            <summary>
+                A networked string table.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.UserCmd">
+            <summary>
+                A command made by the user. Includes viewport state, etc, presumably for replays.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.IValue">
+            <summary>
+            An entity property value
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.Handle">
+            <summary>
+            Generic entity handle property
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.RangeValue`1">
+            <summary>
+            An array type entity property
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.EnumValue`1">
+            <summary>
+            An enumeration property value
+            </summary>
+            <typeparam name="T">Enumeration</typeparam>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.TypedValue`1">
+            <summary>
+            A typed entity property value
+            </summary>
+            <typeparam name="T">Property type</typeparam>
+        </member>
+        <member name="T:Dota2.Engine.Game.Data.Vector">
+            <summary>
+                x,y,z coordinate in the game world
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.DotaGameState">
+            <summary>
+                Simulates the data stored in a DOTA 2 client.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.DotaGameState._details">
+            <summary>
+                Connect details
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.DotaGameState.#ctor(Dota2.Engine.Data.DOTAConnectDetails)">
+            <summary>
+                Instantiates a new game state.
+            </summary>
+            <param name="details">Details</param>
+            <param name="pool">Entity pool</param>
+        </member>
+        <member name="P:Dota2.Engine.Game.DotaGameState.EntityPool">
+            <summary>
+            Parsed and updated entities. Will be null until connected.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.DotaGameState.Reset">
+            <summary>
+                Reset the local data.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.DotaGameState.Update">
+            <summary>
+            Called every tick.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.DotaEntityPool">
+            <summary>
+            Pool of entities currently in the game session.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.DotaEntityPool.Has``1">
+            <summary>
+            Check if the entity pool has a type.
+            </summary>
+            <typeparam name="T">Type to check</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.DotaEntityPool.Get``1(System.UInt32)">
+            <summary>
+            Get an entity by ID.
+            </summary>
+            <typeparam name="T">Entity mapped type</typeparam>
+            <param name="id">ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.DotaEntityPool.GetSingle``1">
+            <summary>
+            Get a single entity by type.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.DotaEntityPool.Update">
+            <summary>
+            Called every tick.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.DotaEntityPool.Builder">
+            <summary>
+            Builder to prepare entity mappings before usage.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.DotaEntityPool.Builder.Build(Dota2.Engine.Game.DotaGameState)">
+            <summary>
+            Finalize the entity mappings.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.DotaEntityPool.Builder.Associate``1(System.String,System.Func{System.UInt32,Dota2.Engine.Game.DotaGameState,Dota2.Engine.Game.Data.MappedEntityClass})">
+            <summary>
+            Associate a mapped entity class with a classname
+            </summary>
+            <typeparam name="T">Mapped class</typeparam>
+            <param name="cname">Class name, e.g. CDOTAPlayer</param>
+            <param name="factory">Factory to build the class given an entity and an id</param>
+            <returns></returns>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.DotaEntitySet">
+            <summary>
+            Built in entity set
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.DotaEntitySet.Associate(Dota2.Engine.Game.Entities.DotaEntityPool.Builder)">
+            <summary>
+            Register all default/supported handlers.
+            </summary>
+            <param name="b">The builder.</param>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.Dota.Ability">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Ability.TableName">
+            <summary>
+            Table name for this mapping.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Ability.Level">
+            <summary>
+            Ability level
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Ability.Cooldown">
+            <summary>
+            The game time the ability comes off cooldown
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Ability.CooldownLength">
+            <summary>
+            Time of the cooldown if it were cast in this tick.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Ability.ManaCost">
+            <summary>
+            Mana cost, 0 if not learned.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Ability.CastRange">
+            <summary>
+            Cast range.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.Dota.GameRules">
+            <summary>
+            Game rules mapping.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.GameState">
+            <summary>
+            Game state.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.MatchID">
+            <summary>
+            Game match ID
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.GameMode">
+            <summary>
+            DOTA game mode.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.PauseTeam">
+            <summary>
+            Which team paused?
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.GameWinner">
+            <summary>
+            Who won?
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.GameTime">
+            <summary>
+            Game time.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.GameStartTime">
+            <summary>
+            Game time when creeps spawn.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.GameEndTime">
+            <summary>
+            The time when the game ended.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.PreGameStartTime">
+            <summary>
+            The time when pre-game started.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.NetTimeOfDay">
+            <summary>
+            Networked time of day, ranges from 1-65536.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.DraftStartingTeam">
+            <summary>
+            The starting team for the draft.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.DraftActiveTeam">
+            <summary>
+            Active team for the draft.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.HeroPickState">
+            <summary>
+            Hero pick state.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.GameRules.ExtraTimeRemaining">
+            <summary>
+            Bonus pick time remaining.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Game.Entities.Dota.GameRules.#ctor(System.UInt32,Dota2.Engine.Game.DotaGameState)">
+            <summary>
+            Selected heros
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.Dota.GameRules.DOTA_ServerTeam">
+            <summary>
+            Server team. Winner will be five unless game is over.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.Dota.GameRules.DOTA_HeroPickState">
+            <summary>
+            Hero pick state
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.Dota.Player">
+            <summary>
+            A DOTA 2 player.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Player.PlayerId">
+            <summary>
+            The DOTA 2 player ID.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Game.Entities.Dota.Player.Hero">
+            <summary>
+            The hero.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Game.Entities.Dota.PlayerResource">
+            <summary>
+            Player names and IDs
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Actuators.UserCmdGenerator">
+            <summary>
+                Generates user commands.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.DotaGameSession">
+            <summary>
+                An instance of a DOTA 2 game session.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._details">
+            <summary>
+                Connect details
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._clientThread">
+            <summary>
+                Client thread
+            </summary>
+        </member>
+        <member name="E:Dota2.Engine.Session.DotaGameSession.Closed">
+            <summary>
+            Called when closed
+            </summary>
+        </member>
+        <member name="E:Dota2.Engine.Session.DotaGameSession.Callback">
+            <summary>
+            Called when the session needs to fire a callback
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession.Controllers">
+            <summary>
+            Game controllers
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Session.DotaGameSession.#ctor(Dota2.Engine.Data.DOTAConnectDetails,Dota2.Engine.Control.IDotaGameController[],Dota2.Engine.Game.Entities.DotaEntityPool.Builder)">
+            <summary>
+                Init a new game connect session.
+            </summary>
+            <param name="deets"></param>
+            <param name="toArray"></param>
+            <param name="poolBuilder">Pool builder</param>
+        </member>
+        <member name="P:Dota2.Engine.Session.DotaGameSession.Running">
+            <summary>
+                Is the game session active.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Session.DotaGameSession.Start">
+            <summary>
+                Launch the game session.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Session.DotaGameSession.Stop">
+            <summary>
+                Stop the client session (and reset it).
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Session.DotaGameSession.ClientThread">
+            <summary>
+                Main client thread.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._gameState">
+            <summary>
+                Game state
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._connection">
+            <summary>
+                Connection to the server.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._handshake">
+            <summary>
+                Handshake handler.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._signon">
+            <summary>
+                Signon handler.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._commandGenerator">
+            <summary>
+            Generates and sends commands.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._game">
+            <summary>
+            Game handler.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.DotaGameSession._stateMachine">
+            <summary>
+            Internal system state machine.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.DotaGameSession.Metastates">
+            <summary>
+            Overall general handler states
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Handlers.Game.DotaGame">
+            <summary>
+            Handles messages related to game state
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Session.Handlers.Game.DotaGame.Handle(Dota2.GC.Dota.Internal.CUserMsg_SayText2)">
+            <summary>
+            Handle a text chat event
+            </summary>
+            <param name="message">packet</param>
+            <returns></returns>
+        </member>
+        <member name="M:Dota2.Engine.Session.Handlers.Game.DotaGame.Handle(Dota2.GC.Dota.Internal.CDOTAUserMsg_ChatEvent)">
+            <summary>
+            Handle a chat event, e.g. "Connected"
+            </summary>
+            <param name="message">packet</param>
+            <returns></returns>
+        </member>
+        <member name="T:Dota2.Engine.Session.Handlers.Handshake.DotaHandshake">
+            <summary>
+                A handler that completes the handshake with the game server.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Handlers.IHandler">
+            <summary>
+            A handler that can process messages
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Handlers.Signon.DotaSignon">
+            <summary>
+                Handles the Signon messages from the server.
+            </summary>
+        </member>
+        <member name="M:Dota2.Engine.Session.Handlers.Signon.DotaSignon.#ctor(Dota2.Engine.Game.DotaGameState,Dota2.Engine.Session.DotaGameConnection,Dota2.Engine.Data.DOTAConnectDetails)">
+            <summary>
+                Initialize the signon handler.
+            </summary>
+            <param name="state"></param>
+            <param name="connection"></param>
+        </member>
+        <member name="T:Dota2.Engine.Session.Networking.Lzss">
+            <summary>
+                LZss compression.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Networking.Stream">
+            <summary>
+                A network stream over a connection.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Networking.Subchannel">
+            <summary>
+                A DOTA 2 DotaGameConnection subchannel.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.State.Enums.Events">
+            <summary>
+                General events of the DOTA 2 game session.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.State.Enums.States">
+            <summary>
+                General states of the DOTA 2 game session.
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.State.Enums.States.HANDSHAKE_REJECTED">
+            <summary>
+            Brief state in which a callback will be fired before disconnection
+            </summary>
+        </member>
+        <member name="F:Dota2.Engine.Session.State.Enums.States.DISCONNECTED">
+            <summary>
+            Initial disconnected state and final state on Close()
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Unpackers.EntityUpdater">
+            <summary>
+                Unpacks incoming Entity updates.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Unpackers.PropertyValueUnpacker">
+            <summary>
+                Unpacks incoming properties.
+            </summary>
+        </member>
+        <member name="T:Dota2.Engine.Session.Unpackers.SendTableFlattener">
+            <summary>
+                Flattens network SendTables
+            </summary>
+        </member>
+        <member name="T:Dota2.Utils.MiscMath">
+            <summary>
+            Misc math functions.
+            </summary>
+        </member>
+        <member name="M:Dota2.Utils.MiscMath.Log2(System.UInt32)">
+            <summary>
+             Log base 2 uint, -> byte
+            </summary>
+            <param name="n"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

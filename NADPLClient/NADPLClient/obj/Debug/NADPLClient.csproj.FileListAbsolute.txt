@@ -1,0 +1,15 @@
+E:\Dota2League\NADPLClient\NADPLClient\bin\Debug\NADPLClient.exe.config
+E:\Dota2League\NADPLClient\NADPLClient\bin\Debug\NADPLClient.exe
+E:\Dota2League\NADPLClient\NADPLClient\bin\Debug\NADPLClient.pdb
+E:\Dota2League\NADPLClient\NADPLClient\bin\Debug\MaterialSkin.dll
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.Form1.resources
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.Properties.Resources.resources
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.csproj.GenerateResource.Cache
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.exe
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.pdb
+E:\Dota2League\NADPLClient\NADPLClient\bin\Debug\ChatSharp.dll
+E:\Dota2League\NADPLClient\NADPLClient\bin\Debug\ChatSharp.pdb
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.csprojResolveAssemblyReference.cache
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.LoginPortal.resources
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.RegisterPortal.resources
+E:\Dota2League\NADPLClient\NADPLClient\obj\Debug\NADPLClient.Notification.resources
